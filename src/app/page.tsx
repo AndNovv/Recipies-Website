@@ -1,112 +1,129 @@
-import Image from "next/image";
+"use client"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
 
-export default function Home() {
+import { useEffect, useMemo, useState } from "react";
+import RecipeCard from "@/components/RecipeCard"
+
+import { recipes } from "@/data/data"
+import FoodTypeSelect from "@/components/FoodTypeSelect"
+import CousineSelect from "@/components/CousineSelect"
+import DifficultyToggle from "@/components/DifficultyToggle";
+import PaginationElement from "@/components/PaginationElement";
+import { usePathname, useRouter } from "next/navigation";
+
+export default function Home({
+  searchParams,
+}: {
+  searchParams?: {
+    page?: string;
+    cousine?: string;
+    foodType?: string;
+    difficulty?: string;
+  };
+}) {
+
+  const currentPage = Number(searchParams?.page) || 1;
+  const cousineQuery = searchParams?.cousine || 'all';
+  const foodTypeQuery = searchParams?.foodType || 'all';
+  const difficultyQuery = searchParams?.difficulty || 'any';
+
+
+  const [cousine, setCousine] = useState('all')
+  const [foodType, setFoodType] = useState('all')
+  const [difficulty, setDifficulty] = useState('any')
+
+  const [numberOffoundRecepies, setNumberOfFoundRecipes] = useState(0)
+
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
+    params.set('cousine', String(cousine));
+    params.set('foodType', String(foodType));
+    params.set('difficulty', String(difficulty));
+    replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [cousine, foodType, difficulty])
+
+  const currecntDispayedRecipes = useMemo(() => {
+    const filteredRecipes = recipes.filter((el) => (cousineQuery === 'all' || el.country === cousineQuery) && (foodTypeQuery === 'all' || el.foodType.includes(foodTypeQuery)) && (difficultyQuery === 'any' || el.difficulty === difficultyQuery))
+    setNumberOfFoundRecipes(filteredRecipes.length)
+    return filteredRecipes.slice((currentPage - 1) * 4, currentPage * 4)
+  }, [currentPage, cousineQuery, foodTypeQuery, difficultyQuery])
+
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
+    <main className="flex min-h-screen flex-col items-center p-3 bg-[#EFEFEF]">
+      <div className="bg-white px-10 py-4 text-2xl w-full font-medium">Сборник рецептов из разных стран мира</div>
+
+      <div className="flex flex-row gap-3 mt-3 w-full h-full flex-1 items-stretch">
+        <aside className="w-[50ch] bg-white flex flex-col gap-3 items-center p-8">
+
+          <div className="relative w-full h-40">
             <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+              alt="Food Image"
+              src="/food.webp"
+              fill
+              className="object-cover rounded-[2px]"
             />
-          </a>
+          </div>
+
+          <div className="text-sm space-y-3 text-balance">
+            <p>В нашей жизни, когда время становится все более ценным ресурсом, задача планирования приема пищи становится все более сложной.</p>
+            <p>Часто мы сталкиваемся с дилеммой: что приготовить на завтрак, обед или ужин? Каким образом мы можем легко и быстро определиться с выбором блюда и не тратить много времени на принятие этого решения?</p>
+            <p>Наш сервис поможет: выбирайте параметры - и вперед!</p>
+          </div>
+
+          <div className="w-full space-y-2">
+
+            <div className="flex space-x-4 justify-end items-center w-full mt-8">
+              <p className="font-bold text-end">Кухня:</p>
+              <CousineSelect cousine={cousine} setCousine={setCousine} />
+            </div>
+            <div className="flex space-x-4 justify-end items-center w-full">
+              <p className="font-bold text-end">Тип блюда:</p>
+              <FoodTypeSelect foodType={foodType} setFoodType={setFoodType} />
+            </div>
+            <div className="flex space-x-4 justify-end items-center w-full">
+              <p className="font-bold text-end w-min">Сложность приготовления:</p>
+              <DifficultyToggle difficulty={difficulty} setDifficulty={setDifficulty} />
+            </div>
+
+          </div>
+
+          <Button
+            variant="link"
+            className="text-blue-700 self-start px-0"
+            onClick={() => { setCousine('all'); setFoodType('all'); setDifficulty('any') }}>
+            Сбросить все фильтры
+          </Button>
+
+          <div className="self-start mt-6 space-y-4">
+            <p className="text-sm text-gray-600">А еще можно попробовать на вкус удачу</p>
+            <Button variant={'outline'}>Мне повезёт!</Button>
+          </div>
+
+        </aside>
+
+
+        <div className="flex flex-col flex-1">
+
+          <div className="w-full bg-white flex items-center py-4 px-10 space-x-3">
+            <h1 className="text-xl">Найденные рецепты</h1>
+            <span className="text-gray-600/50 font-semibold">{numberOffoundRecepies}</span>
+          </div>
+
+          <div className="flex flex-col justify-between gap-4 flex-1 bg-[#F9F9F9] p-4">
+            <div className="flex flex-wrap gap-x-3 gap-y-2 items-center justify-center">
+              {currecntDispayedRecipes.map((el) => <RecipeCard key={`Recipe of ${el.title}`} recipe={el} />)}
+            </div>
+            <PaginationElement searchParams={searchParams} />
+          </div>
+
         </div>
-      </div>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
       </div>
     </main>
   );
