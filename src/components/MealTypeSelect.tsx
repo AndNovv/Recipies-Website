@@ -8,11 +8,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { foodTypeGroupedOptions } from '@/data/data'
+import { mealTypes } from '@/data/data'
 
-const FoodTypeSelect = ({ foodType, setFoodType }: { foodType: string, setFoodType: Dispatch<SetStateAction<string>> }) => {
+const MealTypeSelect = ({ mealType, setMealType }: { mealType: string, setMealType: Dispatch<SetStateAction<string>> }) => {
     return (
-        <Select onValueChange={(value: string) => setFoodType(value)} value={foodType}>
+        <Select onValueChange={(value: string) => setMealType(value)} value={mealType}>
             <SelectTrigger className="w-72">
                 <SelectValue placeholder="Выберите тип блюда" />
             </SelectTrigger>
@@ -21,15 +21,10 @@ const FoodTypeSelect = ({ foodType, setFoodType }: { foodType: string, setFoodTy
                     <SelectLabel>Выберите тип блюда:</SelectLabel>
                     <SelectItem value="all">Все типы</SelectItem>
                 </SelectGroup>
-                {foodTypeGroupedOptions.map((group) =>
-                    <SelectGroup key={group.groupTitle}>
-                        <SelectLabel>{group.groupTitle}</SelectLabel>
-                        {Array.from(group.foodTypes).map((foodType) => <SelectItem key={foodType[0]} value={foodType[0]}>{foodType[1]}</SelectItem>)}
-                    </SelectGroup>
-                )}
+                {mealTypes.map((type) => <SelectItem key={type} value={type}>{type}</SelectItem>)}
             </SelectContent>
         </Select>
     )
 }
 
-export default FoodTypeSelect
+export default MealTypeSelect

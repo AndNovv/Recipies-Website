@@ -1,14 +1,16 @@
-import { cousineOptions, foodTypeOptions } from '@/data/data';
 import { RecipeType } from '@/types';
 import Image from 'next/image'
+import { useRouter } from 'next/navigation';
 import React from 'react'
 
 const RecipeCard = ({ recipe }: { recipe: RecipeType }) => {
 
+    const router = useRouter()
+
     const difficultyToNumber = {
-        easy: 1,
-        medium: 2,
-        hard: 3,
+        Easy: 1,
+        Medium: 2,
+        Hard: 3,
     } as const
 
     const difficulty = recipe.difficulty as keyof typeof difficultyToNumber;
@@ -16,15 +18,15 @@ const RecipeCard = ({ recipe }: { recipe: RecipeType }) => {
     const emptyStars = Array.from({ length: 3 - difficultyToNumber[difficulty] }).fill('☆');
 
     return (
-        <div className="flex max-w-[450px] h-80 bg-white text-md rounded-[2px] border cursor-pointer">
+        <div onClick={() => router.push(`/recipe/${recipe.id}`)} className="flex max-w-[450px] h-80 bg-white text-md rounded-[2px] border cursor-pointer">
             <div className='flex flex-col h-full w-1/2'>
                 <div className='flex items-center h-[70px]'>
-                    <h2 className='text-xl px-6 font-medium'>{recipe.title}</h2>
+                    <h2 className='text-lg px-6 font-medium text-balance'>{recipe.name}</h2>
                 </div>
                 <div className="relative w-full flex-1">
                     <Image
                         alt="Recipe Image"
-                        src="/food.webp"
+                        src={recipe.image}
                         fill
                         className="object-cover rounded-[2px]"
                     />
@@ -33,9 +35,15 @@ const RecipeCard = ({ recipe }: { recipe: RecipeType }) => {
 
             <div className='w-1/2 h-full flex flex-col justify-between p-6'>
 
-                <p className='text-sm cutoff-text self=start'>{recipe.description}</p>
+                <p className='text-sm cutoff-text self=start text-balance'>
+                    Насладитесь великолепным вкусом запеченной мясной туши с травами, овощами и нежным картофельным пюре.
+                    Это блюдо признано классикой и пользуется популярностью благодаря своему неповторимому вкусу и универсальному
+                    признанию. Каждый кусочек — это сочетание сочной мякоти, ароматных трав и нежного пюре, создающее кулинарное
+                    произведение, которым восхищаются гурманы во всем мире. Неважно, где вы находитесь — за семейным столом или в
+                    уединении, это блюдо обещает утолить ваши желания и подарить чувство уюта и радости с каждым восхитительным кусочком.
+                </p>
 
-                <div className='flex flex-col gap-3'>
+                <div className='flex flex-col gap-2'>
 
                     <div className='flex gap-2'>
                         <Image
@@ -44,7 +52,7 @@ const RecipeCard = ({ recipe }: { recipe: RecipeType }) => {
                             width={24}
                             height={24}
                         />
-                        <span>{recipe.time} минут</span>
+                        <span>{recipe.cookTimeMinutes + recipe.prepTimeMinutes} минут</span>
                     </div>
 
                     <div className='flex gap-2'>
@@ -71,10 +79,10 @@ const RecipeCard = ({ recipe }: { recipe: RecipeType }) => {
                         </div>
                     </div>
 
-                    <h4>{cousineOptions.get(recipe.country)}</h4>
+                    <h4>{recipe.cuisine}</h4>
 
-                    <div className='flex gap-2'>
-                        {recipe.foodType.map((el, index) => <div className='flex' key={`${el}${index}`}><h4>{foodTypeOptions.get(el)}</h4><span className={index !== recipe.foodType.length - 1 ? 'block' : 'hidden'}>,</span></div>)}
+                    <div className='flex gap-x-2 flex-wrap'>
+                        {recipe.mealType.map((tag, index) => <div className='flex' key={`${tag}${index}`}><h4 className='whitespace-nowrap'>{tag}</h4><span className={index !== recipe.mealType.length - 1 ? 'block' : 'hidden'}>,</span></div>)}
                     </div>
                 </div>
             </div>

@@ -96,4 +96,8 @@
     pointer-events: none;
     background: linear-gradient(to bottom, transparent, white);
   }
+
+  .recipe-section-height {
+    height: calc(46.5rem)
+  }
 }
