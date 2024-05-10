@@ -21,4 +21,4 @@ yarn install
 yarn dev
 ```
 
-Откройте [http://localhost:3000](http://localhost:3000) в браузере для того, чтобы посмотреть результат.
+4. Откройте [http://localhost:3000](http://localhost:3000) в браузере для того, чтобы посмотреть результат.
