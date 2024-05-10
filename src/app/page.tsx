@@ -70,7 +70,7 @@ export default function Home({
       <div className="bg-white px-10 py-4 text-2xl w-full font-medium">Сборник рецептов из разных стран мира</div>
 
       <div className="flex flex-row gap-3 mt-3 w-full h-full flex-1 items-stretch">
-        <aside className="w-[50ch] bg-white flex flex-col justify-between gap-3 items-center p-8">
+        <aside className="w-[55ch] bg-white flex flex-col justify-between gap-3 items-center p-8">
 
           <div className="relative w-full h-40">
             <Image
@@ -90,15 +90,15 @@ export default function Home({
           <div className="w-full space-y-2">
 
             <div className="flex space-x-4 justify-end items-center w-full mt-8">
-              <p className="font-bold text-end">Кухня:</p>
+              <p className="font-semibold text-end">Кухня:</p>
               <CuisineSelect cuisine={cuisine} setCuisine={setCuisine} />
             </div>
             <div className="flex space-x-4 justify-end items-center w-full">
-              <p className="font-bold text-end">Тип блюда:</p>
+              <p className="font-semibold text-end">Тип блюда:</p>
               <MealTypeSelect mealType={mealType} setMealType={setMealType} />
             </div>
             <div className="flex space-x-4 justify-end items-center w-full">
-              <p className="font-bold text-end w-min">Сложность приготовления:</p>
+              <p className="font-semibold text-end w-min text-base">Сложность приготовления:</p>
               <DifficultyToggle difficulty={difficulty} setDifficulty={setDifficulty} />
             </div>
 
