@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import RecipeControls from '@/components/RecipeControls';
+import LoadingRecipePage from '@/components/LoadingRecipePage';
 
 const RecipePage = ({ params }: { params: { recipeId: string } }) => {
 
@@ -35,13 +36,13 @@ const RecipePage = ({ params }: { params: { recipeId: string } }) => {
     return null
   }, [recipes, params.recipeId])
 
-  if (!recipe) return <h1>Loading</h1>
+  if (!recipe) return <LoadingRecipePage />
 
   return (
     <main className="flex min-h-screen flex-col items-center p-3 bg-[#EFEFEF]">
       <div className="flex gap-4 bg-white px-10 py-4 text-2xl w-full font-medium">
         <Image src="/back.svg" alt="Back icon" width={20} height={20} className='cursor-pointer' onClick={() => router.push('/')} />
-        {recipe.name}
+        <p>{recipe.name}</p>
       </div>
       <div className="flex flex-row gap-3 mt-3 w-full h-full flex-1 items-stretch">
         <aside className="w-[40ch] flex flex-col gap-3 items-center">
